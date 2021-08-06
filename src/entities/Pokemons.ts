@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import MyPokemons from "./MyPokemons";
 
 @Entity("pokemons")
 export default class Sessions{
@@ -28,4 +29,7 @@ export default class Sessions{
 
     @Column()
     inMyPokemons:boolean;
+
+    @OneToMany(()=>MyPokemons,mypokemons=>mypokemons.pokemon)
+    mypokemons:MyPokemons[];
 }

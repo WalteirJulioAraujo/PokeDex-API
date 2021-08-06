@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from "typeorm";
 import Sessions from "./Sessions";
-
+import Mypokemons from "./MyPokemons";
 @Entity("users")
 export default class User {
   @PrimaryGeneratedColumn()
@@ -14,4 +14,7 @@ export default class User {
 
   @OneToOne(()=>Sessions, session=>session.user)
   session:Sessions
+
+  @OneToMany(()=>Mypokemons,mypokemons=>mypokemons.user)
+  mypokemons:Mypokemons[];
 }
