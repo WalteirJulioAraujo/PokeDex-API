@@ -1,14 +1,16 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { getRepository } from "typeorm";
 import Sessions from "../entities/Sessions";
 
-export default async function authMiddleware(req:Request,res:Response) {
+export default async function authMiddleware(req:Request,res:Response, next:NextFunction) {
     const auth = req.headers.authorization;
-    const token = auth.replace("Bearer ","");
+    const token = auth?.replace("Bearer ","");
 
-    const session = getRepository(Sessions).findOne({token});
-
+    const session = await getRepository(Sessions).findOne({token});
     if(!session){
         return res.sendStatus(401);
     }
+    //quero enviar o id;
+    res.locals.session = session;
+    next();
 }
