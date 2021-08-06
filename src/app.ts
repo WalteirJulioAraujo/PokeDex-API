@@ -14,6 +14,8 @@ app.use(express.json());
 
 app.post("/sign-up", userController.insertUser);
 
+app.post("/sign-in", userController.signIn);
+
 app.get("/users", userController.getUsers);
 
 export async function init () {

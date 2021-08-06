@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { signUpSchema } from "./schemas/userSchemas";
+import { signUpSchema, logInSchema } from "./schemas/userSchemas";
 import * as userService from "../services/userService";
 
-interface InsertUser{
+export interface InsertUser{
   email:string;
   password:string;
 }
@@ -31,6 +31,25 @@ export async function insertUser(req: Request, res: Response) {
   }
 }
 
+export async function signIn(req:Request,res:Response) {
+  const user : InsertUser = req.body;
+
+  const validate = logInSchema.validate(user);
+  if(validate.error){
+    console.log(validate.error);
+    return res.sendStatus(400);
+  }
+
+  try{
+    const result = await userService.signIn(user);
+    if(result===false) return res.sendStatus(401);
+    res.send(result).status(200);
+
+  }catch(err){
+    console.log(err);
+    return res.sendStatus(500);
+  }
+}
 
 export async function getUsers (req: Request, res: Response) {
   try {

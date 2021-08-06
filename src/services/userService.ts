@@ -1,12 +1,11 @@
 import { getRepository } from "typeorm";
 import bcrypt from "bcrypt";
+import { v4 as uuid } from "uuid";
+
+import { InsertUser } from "../controllers/userController";
 
 import User from "../entities/User";
-
-interface InsertUser{
-  email: string;
-  password: string;
-}
+import Sessions from "../entities/Sessions";
 
 export async function insertUser (user:InsertUser) {
 
@@ -21,6 +20,21 @@ export async function insertUser (user:InsertUser) {
   const insertUser = await getRepository(User).save(user);
   
   return insertUser;
+}
+
+export async function signIn(user:InsertUser) {
+  const ifExistsEmail = await getRepository(User).findOne({email:user.email});
+  if(!ifExistsEmail){
+    return false;
+  }
+  
+  if(ifExistsEmail && bcrypt.compareSync(user.password,ifExistsEmail.password)){
+    const token = uuid();
+    const insertToken = await getRepository(Sessions).insert({token,userId:ifExistsEmail.id})
+    return token;
+  }
+
+  return false;
 }
 
 export async function getUsers () {
