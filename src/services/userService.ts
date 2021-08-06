@@ -30,7 +30,11 @@ export async function signIn(user:InsertUser) {
   
   if(ifExistsEmail && bcrypt.compareSync(user.password,ifExistsEmail.password)){
     const token = uuid();
-    const insertToken = await getRepository(Sessions).insert({token,userId:ifExistsEmail.id})
+    const searchToken = await getRepository(Sessions).findOne({userId:ifExistsEmail.id});
+    if(searchToken){
+      await getRepository(Sessions).delete({userId:ifExistsEmail.id});
+    }
+    const insertToken = await getRepository(Sessions).insert({token,userId:ifExistsEmail.id});
     return token;
   }
 
