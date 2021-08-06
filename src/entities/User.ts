@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm";
+import Sessions from "./Sessions";
 
 @Entity("users")
 export default class User {
@@ -10,4 +11,7 @@ export default class User {
 
   @Column()
   password: string;
+
+  @OneToOne(()=>Sessions, session=>session.user)
+  session:Sessions
 }
