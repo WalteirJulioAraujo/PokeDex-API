@@ -14,8 +14,9 @@ export async function insertPokemon(req:Request,res:Response) {
 }
 
 export async function getAll(req:Request, res:Response) {
+    const userId = res.locals.session.userId;
     try{
-        const pokemons = await pokemonService.getAll();
+        const pokemons = await pokemonService.getAll(userId);
         res.send(pokemons).status(200);
     }catch(err){
         console.log(err);
