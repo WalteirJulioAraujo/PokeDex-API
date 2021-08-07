@@ -5,6 +5,12 @@ import * as userService from "../services/userService";
 export interface InsertUser{
   email:string;
   password:string;
+  confirmPassword:string;
+}
+
+export interface SignInUser{
+  email:string;
+  password:string;
 }
 
 export async function insertUser(req: Request, res: Response) {
@@ -32,7 +38,7 @@ export async function insertUser(req: Request, res: Response) {
 }
 
 export async function signIn(req:Request,res:Response) {
-  const user : InsertUser = req.body;
+  const user : SignInUser = req.body;
 
   const validate = logInSchema.validate(user);
   if(validate.error){

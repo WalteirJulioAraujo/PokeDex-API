@@ -2,27 +2,31 @@ import { getRepository } from "typeorm";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 
-import { InsertUser } from "../controllers/userController";
+import { InsertUser, SignInUser } from "../controllers/userController";
 
 import User from "../entities/User";
 import Sessions from "../entities/Sessions";
 
 export async function insertUser (user:InsertUser) {
 
-  const ifAlreadyExistsEmail = await getRepository(User).findOne({email:user.email});
+  const userWithoutConfirm = {email:user.email,password:user.password}
+
+  const ifAlreadyExistsEmail = await getRepository(User).findOne({email:userWithoutConfirm.email});
   if(ifAlreadyExistsEmail){
     return null;
   }
 
-  const hash = bcrypt.hashSync(user.password, 10);
-  user.password=hash;
+  const hash = bcrypt.hashSync(userWithoutConfirm.password, 10);
+  userWithoutConfirm.password=hash;
 
-  const insertUser = await getRepository(User).save(user);
+  const insertUser = await getRepository(User).save(userWithoutConfirm);
   
   return insertUser;
 }
 
-export async function signIn(user:InsertUser) {
+
+
+export async function signIn(user:SignInUser) {
   const ifExistsEmail = await getRepository(User).findOne({email:user.email});
   if(!ifExistsEmail){
     return false;
