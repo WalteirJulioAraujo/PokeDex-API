@@ -3,7 +3,7 @@ import { getConnection } from "typeorm";
 
 import app, { init } from "../../src/app";
 import { createValidUser } from "../factories/userFactory";
-import { clearDatabase, insertUserInDatabase } from "../utils/database";
+import { clearDatabase, insertUserInDatabase, returnIdMyPokemons } from "../utils/database";
 
 beforeAll(async () => {
   await init();
@@ -17,8 +17,8 @@ afterAll(async () => {
   await getConnection().close();
 });
 
-describe("GET /pokemons", () => {
-  it("should answer with status 200 if token is correct", async () => {
+describe("POST /my-pokemons/:id/add and /my-pokemons/:id/remove", () => {
+  it("should answer with status 200 if token is correct and test ", async () => {
     const user = createValidUser();
 
     await insertUserInDatabase(user);
@@ -27,10 +27,23 @@ describe("GET /pokemons", () => {
 
     const authorization = "Bearer "+getToken.body.token;
 
-    const response = await supertest(app).get("/pokemons").set('Authorization', authorization);
+    const idPokemon = 25;
 
-    expect(response.status).toBe(200);
+    const responseAdd = await supertest(app).post(`/my-pokemons/${idPokemon}/add`).set('Authorization', authorization);
+
     
+
+    const myPokemons= await returnIdMyPokemons();
+    
+    expect(myPokemons).toContain(idPokemon);
+
+    const responseRemove = await supertest(app).post(`/my-pokemons/${idPokemon}/remove`).set('Authorization', authorization);
+
+    expect(responseRemove.status).toBe(200);
+
+    const myPokemonsAfterRemove= await returnIdMyPokemons();
+
+    expect(myPokemonsAfterRemove).not.toContain(idPokemon);
   });
 
   it("should answer with status 401 if token is incorrect", async () => {
