@@ -10,7 +10,6 @@ export default async function authMiddleware(req:Request,res:Response, next:Next
     if(!session){
         return res.sendStatus(401);
     }
-    //quero enviar o id;
     res.locals.session = session;
     next();
 }

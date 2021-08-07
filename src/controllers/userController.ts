@@ -43,7 +43,7 @@ export async function signIn(req:Request,res:Response) {
   try{
     const result = await userService.signIn(user);
     if(result===false) return res.sendStatus(401);
-    res.send(result).status(200);
+    res.send({token:result}).status(200);
 
   }catch(err){
     console.log(err);
